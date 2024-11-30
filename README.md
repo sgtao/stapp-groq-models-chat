@@ -1,5 +1,6 @@
 # stapp-groq-models-chat
-[streamlit](https://streamlit.io/)のアプリ開発するためのテンプレートを作ってみる
+- [streamlit](https://streamlit.io/)でGroq APIを使用したモデル情報表示とチャットボット機能を提供。
+  - OpenAIライブラリとの互換性を活用
 
 ## Usage
 - [poetry cli](https://python-poetry.org/docs/)を利用する
