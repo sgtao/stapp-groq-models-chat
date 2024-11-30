@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "stapp-template"
+name = "stapp-groq-models-chat"
 version = "0.1.0"
-description = "streamlit project template for quick start"
+description = "Groq APIを使用したモデル情報表示とチャットボット機能を提供。OpenAIライブラリとの互換性を活用"
 authors = ["Shogo Ogami <sg.tao.so@gmail.com>"]
 license = "MIT License"
 readme = "README.md"
