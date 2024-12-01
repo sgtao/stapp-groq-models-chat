@@ -2,8 +2,8 @@
 import streamlit as st
 
 from components.GropApiKey import GropApiKey
+from components.ModelSelector import ModelSelector
 
-# from components.ModelSelector import ModelSelector
 from functions.GroqAPI import GroqAPI
 
 
@@ -18,22 +18,10 @@ def display_chat_history():
             st.markdown(message["content"])
 
 
-def init_model_state():
-    if "models" not in st.session_state:
-        st.session_state.models = []
-    if "selected_model" not in st.session_state:
-        st.session_state.selected_model = None
-
-
-def on_model_change():
-    st.session_state.selected_model = st.session_state.model_selector
-
-
 def main():
     st.title("Groq チャットボット")
     # 初期化を最初に行う
     init_chat_history()
-    init_model_state()
 
     # サイドバー：APIキー入力
     groq_api_key = GropApiKey()
@@ -47,24 +35,9 @@ def main():
     client = GroqAPI(st.session_state.groq_api_key)
 
     # モデル選択
-    # モデル情報の取得（初回のみ）
-    if len(st.session_state.models) == 0:
-        models = client.get_models_info()
-        model_ids = [model["id"] for model in models]
-        st.session_state.models = model_ids
-
-    selected_model = st.selectbox(
-        "モデルを選択:",
-        st.session_state.models,
-        key="model_selector",
-        on_change=on_model_change,
-        index=(
-            st.session_state.models.index(st.session_state.selected_model)
-            if st.session_state.selected_model
-            else 0
-        ),
-    )
-    st.session_state.selected_model = selected_model
+    with st.sidebar:
+        model_selector = ModelSelector()
+        model_selector.select_box()
 
     # チャット履歴の初期化と表示
     init_chat_history()
