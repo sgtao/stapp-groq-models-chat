@@ -2,8 +2,11 @@
 - [streamlit](https://streamlit.io/)でGroq APIを使用したモデル情報表示とチャットボット機能を提供。
   - OpenAIライブラリとの互換性を活用
 
+## Demo
+- [Demo site](https://sgtao-groq-models-chat.streamlit.app/)
+
 ## Usage
-- [poetry cli](https://python-poetry.org/docs/)を利用する
+- コマンドラインでの実行は、[poetry cli](https://python-poetry.org/docs/)を利用する
 
 ### Setup
 ```sh
