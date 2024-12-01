@@ -27,8 +27,8 @@ def main():
     groq_api_key = GropApiKey()
     groq_api_key.input_key()
 
-    if "groq_api_key" not in st.session_state:
-        st.warning("APIキーを入力してください")
+    if groq_api_key.has_key() == False:
+        st.warning("Input Groq API-Key at sidebar")
         return
 
     # チャットクライアントの初期化

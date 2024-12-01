@@ -33,20 +33,24 @@ def display_model_info(models):
                 if "instant" in model["id"]:
                     st.write("⚡ 高速推論対応")
 
-
-if __name__ == "__main__":
+def main():
     # sidebar: apikey input
     groq_api_key = GropApiKey()
     groq_api_key.input_key()
 
     # main content
     st.title("Groq モデル情報ダッシュボード")
+    if groq_api_key.has_key() == False:
+        st.warning("Input Groq API-Key at sidebar")
+        return
 
-    if "groq_api_key" in st.session_state:
-        try:
-            client = GroqAPI(st.session_state.groq_api_key)
-            models_info = client.get_models_info()
-            display_model_info(models_info)
+    try:
+        client = GroqAPI(st.session_state.groq_api_key)
+        models_info = client.get_models_info()
+        display_model_info(models_info)
 
-        except Exception as e:
-            st.error(f"モデル情報の取得に失敗しました: {str(e)}")
+    except Exception as e:
+        st.error(f"モデル情報の取得に失敗しました: {str(e)}")
+
+if __name__ == "__main__":
+    main()
