@@ -48,12 +48,10 @@ def main():
         # アシスタントの応答
         with st.chat_message("assistant"):
             with st.spinner("考え中..."):
-                response = client.client.chat.completions.create(
+                assistant_response = client.single_completion(
                     model=selected_model,
                     messages=st.session_state.messages,
-                    temperature=0.7,
                 )
-                assistant_response = response.choices[0].message.content
                 st.markdown(assistant_response)
 
         st.session_state.messages.append(

@@ -22,8 +22,7 @@ class GroqAPI:
     def __init__(self, api_key):
         self.api_key = api_key
         self.client = openai.OpenAI(
-            api_key=api_key,
-            base_url=_BASE_URL,
+            base_url="https://api.groq.com/openai/v1", api_key=api_key
         )
 
     def get_models_info(self):
@@ -65,3 +64,41 @@ class GroqAPI:
         logging.debug(f"[{_NAME}] End..")
 
         return data
+
+    def single_completion(self, model, messages):
+        # Logger at start
+        _NAME = "single_completion"
+        logging.debug(f"[{_NAME}] Start")
+        logging.debug(f"[{_NAME}] 使用モデル: {model}")
+        logging.debug(
+            f"""
+            [{_NAME}] リクエスト・メッセージ: {
+                json.dumps(messages, indent=2, ensure_ascii=False)
+            }
+            """
+        )
+
+        try:
+            # response = self.client.invoke(
+            response = self.client.chat.completions.create(
+                model=model,
+                messages=messages,
+            )
+            assistant_completion = response.choices[0].message.content
+
+            logging.debug(
+                f"""
+                [{_NAME}] レスポンスボディ: {
+                    json.dumps(response.json(), indent=2, ensure_ascii=False)
+                }
+                """
+            )
+            assistant_completion = response.choices[0].message.content
+        except Exception as ex:
+            logging.error(f"[{_NAME}] エラー発生: {str(ex)}")
+            assistant_completion = f"問い合わせに失敗しました（{ex}）"
+        finally:
+            logging.debug(f"[{_NAME}] 回答: {assistant_completion}")
+            logging.debug(f"[{_NAME}] End..")
+
+            return assistant_completion
