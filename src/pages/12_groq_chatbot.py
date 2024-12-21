@@ -27,7 +27,7 @@ def main():
     groq_api_key = GropApiKey()
     groq_api_key.input_key()
 
-    if groq_api_key.has_key() == False:
+    if groq_api_key.has_key() is False:
         st.warning("Input Groq API-Key at sidebar")
         return
 
