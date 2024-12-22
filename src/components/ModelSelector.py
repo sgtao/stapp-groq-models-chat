@@ -26,7 +26,10 @@ class ModelSelector:
         # クライアントの初期化
         client = GroqAPI(st.session_state.groq_api_key)
         models = client.get_models_info()
-        model_ids = [model["id"] for model in models]
+        sorted_models = client.sort_models(
+            data=models, supplement_filter="Base-Language"
+        )
+        model_ids = [model["id"] for model in sorted_models]
         st.session_state.models = model_ids
 
     def select_box(self):
