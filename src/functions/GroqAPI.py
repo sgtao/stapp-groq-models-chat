@@ -32,10 +32,45 @@ class GroqAPI:
                 item["supplement"] = "Voice-to-Text"
             elif "vision" in item["id"]:
                 item["supplement"] = "Vision-Enhanced"
+            elif "tool-use" in item["id"]:
+                item["supplement"] = "Tool-Enhanced"
             else:
                 item["supplement"] = "Base-Language"
 
         return data
+
+    def sort_models(self, data, supplement_filter=None):
+        """モデル情報をソートしフィルタリングする
+
+        Args:
+            data (list): モデル情報のリスト
+            supplement_filter (str, optional): フィルタリングする supplement の値
+                "Voice-to-Text", "Vision-Enhanced", "Base-Language" のいずれか
+
+        Returns:
+            list: ソート・フィルタリングされたモデル情報のリスト
+        """
+        # フィルタリング
+        if supplement_filter:
+            filtered_data = [
+                item
+                for item in data
+                if item.get("supplement") == supplement_filter
+            ]
+        else:
+            filtered_data = data
+
+        # owned_by と id でソート
+        sorted_data = sorted(
+            filtered_data,
+            key=lambda x: (
+                x.get("supplement", ""),
+                x.get("owned_by", ""),
+                x.get("id", ""),
+            ),
+        )
+
+        return sorted_data
 
     def get_models_info(self):
         """モデル情報を取得"""

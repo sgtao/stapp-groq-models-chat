@@ -11,7 +11,7 @@ st.set_page_config(page_title="Groq モデル情報", layout="wide")
 
 # def display_model_info(self, models: List[Dict]):
 def display_model_info(models):
-    st.header("利用可能なGroqモデル")
+    st.subheader("利用可能なGroqモデル")
 
     for model in models:
         with st.expander(f"📚 {model['id']}", expanded=False):
@@ -49,7 +49,8 @@ def main():
     try:
         client = GroqAPI(st.session_state.groq_api_key)
         models_info = client.get_models_info()
-        display_model_info(models_info)
+        sorted_model = client.sort_models(data=models_info)
+        display_model_info(sorted_model)
 
     except Exception as e:
         st.error(f"モデル情報の取得に失敗しました: {str(e)}")
