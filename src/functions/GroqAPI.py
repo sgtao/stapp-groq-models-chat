@@ -25,6 +25,18 @@ class GroqAPI:
             base_url="https://api.groq.com/openai/v1", api_key=api_key
         )
 
+    def _add_supplement_property(self, data):
+        # append supplement
+        for item in data:
+            if "whisper" in item["id"]:
+                item["supplement"] = "Voice-to-Text"
+            elif "vision" in item["id"]:
+                item["supplement"] = "Vision-Enhanced"
+            else:
+                item["supplement"] = "Base-Language"
+
+        return data
+
     def get_models_info(self):
         """モデル情報を取得"""
         # Logger at start
@@ -50,20 +62,27 @@ class GroqAPI:
         #     }
         #     """
         # )
+        # logging.debug(
+        #     f"""
+        #     [{_NAME}] レスポンスボディ: {
+        #         json.dumps(response.json(), indent=2, ensure_ascii=False)
+        #     }
+        #     """
+        # )
+
+        data = response.json()["data"]
+        data_with_supplement = self._add_supplement_property(data)
+        logging.debug(f"[{_NAME}] 取得したモデル数: {len(data)}")
         logging.debug(
             f"""
             [{_NAME}] レスポンスボディ: {
-                json.dumps(response.json(), indent=2, ensure_ascii=False)
+                json.dumps(data_with_supplement, indent=2, ensure_ascii=False)
             }
             """
         )
-
-        data = response.json()["data"]
-        logging.debug(f"[{_NAME}] 取得したモデル数: {len(data)}")
-
         logging.debug(f"[{_NAME}] End..")
 
-        return data
+        return data_with_supplement
 
     def single_completion(self, model, messages):
         # Logger at start

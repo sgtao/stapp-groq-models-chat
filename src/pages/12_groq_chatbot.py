@@ -1,4 +1,6 @@
 # 12_groq_chatbot.py
+import time
+
 import streamlit as st
 
 from components.GropApiKey import GropApiKey
@@ -19,7 +21,7 @@ def display_chat_history():
 
 
 def main():
-    st.title("Groq チャットボット")
+    st.header("Groq チャットボット")
     # 初期化を最初に行う
     init_chat_history()
 
@@ -61,6 +63,14 @@ def main():
         st.session_state.messages.append(
             {"role": "assistant", "content": assistant_response}
         )
+
+    # 会話履歴の保存・削除
+    if len(st.session_state.messages) > 0:
+        if st.button("Clear Chat"):
+            st.session_state.messages = []
+            st.info("会話履歴をクリアしました")
+            time.sleep(3)
+            st.rerun()
 
 
 if __name__ == "__main__":

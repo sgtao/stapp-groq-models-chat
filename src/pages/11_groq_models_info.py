@@ -26,6 +26,7 @@ def display_model_info(models):
 
             with col2:
                 st.markdown("**モデルの特徴**")
+                st.write(model.get("supplement"))
                 if "tool-use" in model["id"]:
                     st.write("✅ ツール/関数呼び出し対応")
                 if "preview" in model["id"]:
@@ -40,7 +41,7 @@ def main():
     groq_api_key.input_key()
 
     # main content
-    st.title("Groq モデル情報ダッシュボード")
+    st.header("Groq モデル情報ダッシュボード")
     if groq_api_key.has_key() is False:
         st.warning("Input Groq API-Key at sidebar")
         return
