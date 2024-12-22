@@ -1,10 +1,9 @@
 # 12_groq_chatbot.py
-import time
-
 import streamlit as st
 
 from components.GropApiKey import GropApiKey
 from components.ModelSelector import ModelSelector
+from components.MessageController import MessageController
 
 from functions.GroqAPI import GroqAPI
 
@@ -24,6 +23,7 @@ def main():
     st.header("Groq チャットボット")
     # 初期化を最初に行う
     init_chat_history()
+    message_controller = MessageController()
 
     # サイドバー：APIキー入力
     groq_api_key = GropApiKey()
@@ -66,11 +66,7 @@ def main():
 
     # 会話履歴の保存・削除
     if len(st.session_state.messages) > 0:
-        if st.button("Clear Chat"):
-            st.session_state.messages = []
-            st.info("会話履歴をクリアしました")
-            time.sleep(3)
-            st.rerun()
+        message_controller.place_components(st.session_state.messages)
 
 
 if __name__ == "__main__":
