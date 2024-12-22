@@ -11,7 +11,7 @@ def _on_model_change():
 class ModelSelector:
     """Class for selecting the Groq model"""
 
-    def __init__(self):
+    def __init__(self, filter=None):
         """Define the available models"""
         if "models" not in st.session_state:
             st.session_state.models = []
@@ -20,14 +20,15 @@ class ModelSelector:
 
         # モデル情報の取得（初回のみ）
         if len(st.session_state.models) == 0:
-            self.initialize_options()
+            self.initialize_options(filter)
 
-    def initialize_options(self):
+    def initialize_options(self, filter):
         # クライアントの初期化
         client = GroqAPI(st.session_state.groq_api_key)
         models = client.get_models_info()
         sorted_models = client.sort_models(
-            data=models, supplement_filter="Base-Language"
+            data=models,
+            supplement_filter=filter,
         )
         model_ids = [model["id"] for model in sorted_models]
         st.session_state.models = model_ids

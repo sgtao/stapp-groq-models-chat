@@ -38,7 +38,7 @@ def main():
 
     # モデル選択
     with st.sidebar:
-        model_selector = ModelSelector()
+        model_selector = ModelSelector("Base-Language")
         model_selector.select_box()
 
     # チャット履歴の初期化と表示
