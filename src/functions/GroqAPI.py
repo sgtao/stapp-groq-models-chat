@@ -6,7 +6,7 @@ import requests
 import openai
 
 _BASE_URL = "https://api.groq.com/openai/v1"
-logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
 
 
 class GroqAPI:
