@@ -41,7 +41,7 @@ class ModelSelector:
         """
 
         selected_model = st.selectbox(
-            "モデルを選択:",
+            "Select Model (モデルを選択):",
             st.session_state.models,
             key="model_selector",
             on_change=_on_model_change,

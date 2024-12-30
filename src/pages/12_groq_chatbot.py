@@ -8,6 +8,9 @@ from components.ModelParameters import ModelParameters
 
 from functions.GroqAPI import GroqAPI
 
+# ページ設定に移動
+st.set_page_config(page_title="Groq ChatBot", layout="wide", page_icon="💭")
+
 
 def init_chat_history():
     if "messages" not in st.session_state:
@@ -31,21 +34,23 @@ def main():
     # サイドバー：APIキー入力
     groq_api_key.input_key()
 
-    if groq_api_key.has_key() is False:
-        st.warning("Input Groq API-Key at sidebar")
-        return
-
     # チャットクライアントの初期化
     client = GroqAPI(st.session_state.groq_api_key)
 
     # メイン画面の構築
-    st.header("Groq チャットボット")
+    st.page_link("main.py", label="Go to Main", icon="🏠")
+    st.subheader(
+        "💭 Groq-API ChatBot (Groq チャットボット)",
+        divider="blue",
+    )
+    if groq_api_key.has_key() is False:
+        st.warning("Input Groq API-Key at sidebar")
+        return
 
     # 会話履歴の保存・削除
     if len(st.session_state.messages) <= 0:
-        st.subheader(
-            "Setup Model and parameters:モデルとパラメータを設定してください",
-            divider="blue",
+        st.write(
+            "Setup Model and parameters:モデルとパラメータを設定してください"
         )
         model_selector.select_box()
         # パラメータ設定UIの表示

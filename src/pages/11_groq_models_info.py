@@ -4,15 +4,14 @@ import streamlit as st
 from components.GropApiKey import GropApiKey
 from functions.GroqAPI import GroqAPI
 
-# # メインページに移動
-# st.page_link("main.py", label="Go to Main", icon="🏠")
-st.set_page_config(page_title="Groq モデル情報", layout="wide")
+# ページ設定に移動
+st.set_page_config(
+    page_title="Groq Models info", layout="wide", page_icon="📚"
+)
 
 
 # def display_model_info(self, models: List[Dict]):
 def display_model_info(models):
-    st.subheader("利用可能なGroqモデル")
-
     for model in models:
         with st.expander(f"📚 {model['id']}", expanded=False):
             col1, col2 = st.columns(2)
@@ -41,7 +40,8 @@ def main():
     groq_api_key.input_key()
 
     # main content
-    st.header("Groq モデル情報ダッシュボード")
+    st.page_link("main.py", label="Go to Main", icon="🏠")
+    st.subheader("📚 Groq-API Models Info (Groq モデル情報ダッシュボード)")
     if groq_api_key.has_key() is False:
         st.warning("Input Groq API-Key at sidebar")
         return

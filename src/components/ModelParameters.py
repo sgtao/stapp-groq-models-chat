@@ -42,7 +42,9 @@ class ModelParameters:
             st.session_state.llm_params = LLMParameters()
 
     def render_tuning_parameters(self) -> None:
-        with st.expander("生成パラメータ設定", expanded=False):
+        with st.expander(
+            "Setting LLM Parameters(生成パラメータ設定):", expanded=False
+        ):
             col1, col2 = st.columns(2)
 
             with col1:
