@@ -6,7 +6,7 @@ import requests
 import openai
 
 _BASE_URL = "https://api.groq.com/openai/v1"
-# logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 
 class GroqAPI:
@@ -119,38 +119,53 @@ class GroqAPI:
 
         return data_with_supplement
 
-    def single_completion(self, model, messages):
-        # Logger at start
+    def single_completion(self, model, messages, llm_params=None):
+        """
+        単一の完了リクエストを実行します。
+
+        Args:
+            model (str): 使用するモデル名
+            messages (list): メッセージのリスト
+            llm_params (dict, optional): 生成パラメータの辞書
+        """
         _NAME = "single_completion"
         logging.debug(f"[{_NAME}] Start")
         logging.debug(f"[{_NAME}] 使用モデル: {model}")
+        if llm_params:
+            logging.debug(f"""[{_NAME}] 生成パラメータ: {llm_params}""")
+
         logging.debug(
-            f"""
-            [{_NAME}] リクエスト・メッセージ: {
+            f"""[{_NAME}] リクエスト・メッセージ: {
                 json.dumps(messages, indent=2, ensure_ascii=False)
-            }
-            """
+            }"""
         )
 
         try:
-            # response = self.client.invoke(
-            response = self.client.chat.completions.create(
-                model=model,
-                messages=messages,
-            )
+            response = None
+
+            # LLMパラメータが指定されている場合は利用する
+            if llm_params:
+                response = self.client.chat.completions.create(
+                    model=model,
+                    messages=messages,
+                    temperature=llm_params.temperature,
+                    top_p=llm_params.top_p,
+                    max_tokens=llm_params.max_tokens,
+                    frequency_penalty=llm_params.frequency_penalty,
+                    presence_penalty=llm_params.presence_penalty,
+                )
+            else:
+                # response = self.client.invoke(
+                response = self.client.chat.completions.create(
+                    model=model,
+                    messages=messages,
+                )
             assistant_completion = response.choices[0].message.content
 
-            logging.debug(
-                f"""
-                [{_NAME}] レスポンスボディ: {
-                    json.dumps(response.json(), indent=2, ensure_ascii=False)
-                }
-                """
-            )
-            assistant_completion = response.choices[0].message.content
         except Exception as ex:
             logging.error(f"[{_NAME}] エラー発生: {str(ex)}")
             assistant_completion = f"問い合わせに失敗しました（{ex}）"
+
         finally:
             logging.debug(f"[{_NAME}] 回答: {assistant_completion}")
             logging.debug(f"[{_NAME}] End..")

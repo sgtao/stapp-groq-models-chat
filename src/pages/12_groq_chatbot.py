@@ -67,6 +67,7 @@ def main():
                 assistant_response = client.single_completion(
                     model=st.session_state.selected_model,
                     messages=st.session_state.messages,
+                    llm_params=st.session_state.llm_params,
                 )
                 st.markdown(assistant_response)
 
