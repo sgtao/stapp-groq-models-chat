@@ -4,6 +4,7 @@ import streamlit as st
 from components.GropApiKey import GropApiKey
 from components.ModelSelector import ModelSelector
 from components.MessageController import MessageController
+from components.ModelParameters import ModelParameters
 
 from functions.GroqAPI import GroqAPI
 
@@ -20,13 +21,14 @@ def display_chat_history():
 
 
 def main():
-    st.header("Groq チャットボット")
     # 初期化を最初に行う
     init_chat_history()
     message_controller = MessageController()
+    groq_api_key = GropApiKey()
+    model_selector = ModelSelector("Base-Language")
+    model_params = ModelParameters()
 
     # サイドバー：APIキー入力
-    groq_api_key = GropApiKey()
     groq_api_key.input_key()
 
     if groq_api_key.has_key() is False:
@@ -36,14 +38,22 @@ def main():
     # チャットクライアントの初期化
     client = GroqAPI(st.session_state.groq_api_key)
 
-    # モデル選択
-    with st.sidebar:
-        model_selector = ModelSelector("Base-Language")
-        model_selector.select_box()
+    # メイン画面の構築
+    st.header("Groq チャットボット")
 
-    # チャット履歴の初期化と表示
-    init_chat_history()
-    display_chat_history()
+    # 会話履歴の保存・削除
+    if len(st.session_state.messages) <= 0:
+        st.subheader(
+            "Setup Model and parameters:モデルとパラメータを設定してください",
+            divider="blue",
+        )
+        model_selector.select_box()
+        # パラメータ設定UIの表示
+        model_params.render_tuning_parameters()
+    else:
+        # チャット履歴の初期化と表示
+        display_chat_history()
+        message_controller.place_components(st.session_state.messages)
 
     # ユーザー入力
     if prompt := st.chat_input("メッセージを入力してください:"):
@@ -60,13 +70,11 @@ def main():
                 )
                 st.markdown(assistant_response)
 
-        st.session_state.messages.append(
-            {"role": "assistant", "content": assistant_response}
-        )
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": assistant_response}
+                )
 
-    # 会話履歴の保存・削除
-    if len(st.session_state.messages) > 0:
-        message_controller.place_components(st.session_state.messages)
+                st.rerun()
 
 
 if __name__ == "__main__":
