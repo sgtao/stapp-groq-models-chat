@@ -8,7 +8,7 @@ from typing import Dict, Any
 class LLMParameters:
     temperature: float = 0.7
     top_p: float = 1.0
-    max_tokens: int = 256
+    max_tokens: int = 512
     frequency_penalty: float = 0.0
     presence_penalty: float = 0.0
 
@@ -42,54 +42,47 @@ class ModelParameters:
             st.session_state.llm_params = LLMParameters()
 
     def render_tuning_parameters(self) -> None:
-        with st.expander(
-            "Setting LLM Parameters(生成パラメータ設定):", expanded=False
-        ):
-            col1, col2 = st.columns(2)
-
-            with col1:
-                new_temperature = st.slider(
-                    "Temperature",
-                    min_value=0.0,
-                    max_value=2.0,
-                    value=st.session_state.llm_params.temperature,
-                    step=0.1,
-                    help="出力のランダム性を制御（0-2）",
-                )
-                new_top_p = st.slider(
-                    "Top P",
-                    min_value=0.0,
-                    max_value=1.0,
-                    value=st.session_state.llm_params.top_p,
-                    step=0.1,
-                    help="確率質量の上位を考慮",
-                )
-                new_max_tokens = st.slider(
-                    "Max Tokens",
-                    min_value=1000,
-                    max_value=8000,
-                    value=st.session_state.llm_params.max_tokens,
-                    step=1000,
-                    help="生成する最大トークン数",
-                )
-
-            with col2:
-                new_frequency_penalty = st.slider(
-                    "Frequency Penalty",
-                    min_value=0.0,
-                    max_value=2.0,
-                    value=st.session_state.llm_params.frequency_penalty,
-                    step=0.1,
-                    help="単語の繰り返しにペナルティを与える",
-                )
-                new_presence_penalty = st.slider(
-                    "Presence Penalty",
-                    min_value=0.0,
-                    max_value=2.0,
-                    value=st.session_state.llm_params.presence_penalty,
-                    step=0.1,
-                    help="トークンの重複を抑制",
-                )
+        with st.expander("Set Parameters (パラメタ設定):", expanded=False):
+            new_temperature = st.slider(
+                "Temperature",
+                min_value=0.0,
+                max_value=2.0,
+                value=st.session_state.llm_params.temperature,
+                step=0.1,
+                help="出力のランダム性を制御（0-2）",
+            )
+            new_top_p = st.slider(
+                "Top P",
+                min_value=0.0,
+                max_value=1.0,
+                value=st.session_state.llm_params.top_p,
+                step=0.1,
+                help="確率質量の上位を考慮",
+            )
+            new_max_tokens = st.slider(
+                "Max Tokens",
+                min_value=1000,
+                max_value=8000,
+                value=st.session_state.llm_params.max_tokens,
+                step=1000,
+                help="生成する最大トークン数",
+            )
+            new_frequency_penalty = st.slider(
+                "Frequency Penalty",
+                min_value=0.0,
+                max_value=2.0,
+                value=st.session_state.llm_params.frequency_penalty,
+                step=0.1,
+                help="単語の繰り返しにペナルティを与える",
+            )
+            new_presence_penalty = st.slider(
+                "Presence Penalty",
+                min_value=0.0,
+                max_value=2.0,
+                value=st.session_state.llm_params.presence_penalty,
+                step=0.1,
+                help="トークンの重複を抑制",
+            )
 
             # パラメータの更新
             if self._check_params_changed(

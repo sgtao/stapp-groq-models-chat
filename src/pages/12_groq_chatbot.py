@@ -37,6 +37,12 @@ def main():
     # チャットクライアントの初期化
     client = GroqAPI(st.session_state.groq_api_key)
 
+    with st.sidebar:
+        # パラメータ設定UIの表示
+        st.write("Setup LLM Prameters:")
+        model_selector.select_box()
+        model_params.render_tuning_parameters()
+
     # メイン画面の構築
     st.page_link("main.py", label="Go to Main", icon="🏠")
     st.subheader(
@@ -48,14 +54,7 @@ def main():
         return
 
     # 会話履歴の保存・削除
-    if len(st.session_state.messages) <= 0:
-        st.write(
-            "Setup Model and parameters:モデルとパラメータを設定してください"
-        )
-        model_selector.select_box()
-        # パラメータ設定UIの表示
-        model_params.render_tuning_parameters()
-    else:
+    if len(st.session_state.messages) > 0:
         # チャット履歴の初期化と表示
         display_chat_history()
         message_controller.place_components(st.session_state.messages)
