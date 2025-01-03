@@ -27,6 +27,20 @@ _DEFAULT_SYS_PROMPT: str = (
 )
 
 
+@dataclass
+class SystemPrompt:
+    use_prompt: bool = True
+    prompt: str = _DEFAULT_SYS_PROMPT
+    disabled_edit: bool = False
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "use_prompt": self.use_prompt,
+            "prompt": self.prompt,
+            "disabled_edit": self.disabled_edit,
+        }
+
+
 class ModelParameters:
 
     def __init__(self) -> None:
@@ -34,9 +48,16 @@ class ModelParameters:
 
     def _initialize_session_state(self) -> None:
         if "system_prompt" not in st.session_state:
-            st.session_state.use_system_prompt = False
+            st.session_state.use_sys_prompt = True
             st.session_state.system_prompt = _DEFAULT_SYS_PROMPT
-            st.session_state.disabled_edit_params = False
+            st.session_state.fixed_sys_prompt = False
+            # system_prompt = {
+            #     "use_prompt": True,
+            #     "prompt": _DEFAULT_SYS_PROMPT,
+            #     "disabled_edit": True,
+            # }
+            # st.session_state.system_prompt = system_prompt
+            # st.session_state.system_prompt = SystemPrompt()
 
         if "llm_params" not in st.session_state:
             st.session_state.llm_params = LLMParameters()

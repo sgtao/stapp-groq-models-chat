@@ -6,6 +6,8 @@ from components.ModelSelector import ModelSelector
 from components.MessageController import MessageController
 from components.ModelParameters import ModelParameters
 
+# from components.SystemPrompt import SystemPrompt
+
 from functions.GroqAPI import GroqAPI
 
 # ページ設定に移動
@@ -19,6 +21,9 @@ def init_chat_history():
 
 def display_chat_history():
     for message in st.session_state.messages:
+        if message["role"] == "system":
+            continue
+
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
@@ -30,6 +35,11 @@ def main():
     groq_api_key = GropApiKey()
     model_selector = ModelSelector("Base-Language")
     model_params = ModelParameters()
+    # system_prompt = SystemPrompt()
+    # print(f"system_prompt: {system_prompt.get_one("use_prompt")}")
+    # print(f"system_prompt: {st.session_state.system_prompt.use_prompt}")
+    # print(st.session_state.system_prompt)
+    # system_prompt.display_state()
 
     # サイドバー：APIキー入力
     groq_api_key.input_key()
@@ -53,7 +63,30 @@ def main():
         st.warning("Input Groq API-Key at sidebar")
         return
 
+    # セッション状態の全内容を表示
+    st.write("####o 全セッション状態")
+    st.json(st.session_state)  # JSON形式で表示
+
     # 会話履歴の保存・削除
+    # if system_prompt.get_one("use_prompt"):
+    #     st.session_state.messages.append(system_prompt.get_message())
+    # st.session_state.messages.append(system_prompt.get_message())
+    # system_prompt = st.session_state.system_prompt
+    with st.expander("System Prompt (システム指示):", expanded=False):
+        updated_prompt = st.session_state.system_prompt
+        updated_prompt = st.text_area(
+            "Edit SYSTEM_PROMPT",
+            value=st.session_state.system_prompt,
+            height=100,
+            disabled=(len(st.session_state.messages) > 0),
+        )
+        st.session_state.system_prompt = updated_prompt
+
+        st.session_state.use_sys_prompt = st.toggle(
+            label="use System Prompt",
+            disabled=(len(st.session_state.messages) > 0),
+        )
+
     if len(st.session_state.messages) > 0:
         # チャット履歴の初期化と表示
         display_chat_history()
@@ -61,6 +94,17 @@ def main():
 
     # ユーザー入力
     if prompt := st.chat_input("メッセージを入力してください:"):
+        # 最初のメッセージは`system_prompt`を付与する
+        if (
+            len(st.session_state.messages) == 0
+            and st.session_state.use_sys_prompt
+        ):
+            st.session_state.messages.append(
+                {
+                    "role": "system",
+                    "content": st.session_state.system_prompt,
+                }
+            )
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
