@@ -23,6 +23,22 @@ class MessageController:
             time.sleep(3)
             st.rerun()
 
+    # 『再試行』（削除）ボタン：
+    def delete_last_message(self):
+        # if st.button("Delete Last Message"):
+        if st.button("Retry Chat"):
+            if len(st.session_state.messages) > 0:
+                # 最後のメッセージが"assistant"ならば２つ削除
+                popped_msg = st.session_state.messages.pop()
+                if popped_msg["role"] == "assistant":
+                    st.session_state.messages.pop()
+
+                st.info("最後のメッセージを削除しました")
+                time.sleep(1)
+                st.rerun()
+            else:
+                st.warning("削除できるメッセージがありません")
+
     # 『保存』ボタン：
     def save_messages(self, messages):
         # チャット履歴をダウンロードするボタン
@@ -45,11 +61,14 @@ class MessageController:
 
     def place_components(self, messages):
         # カラムを作成
-        col1, col2 = st.columns([1, 2])
+        col1, col2, col3 = st.columns([1, 1, 2])
 
         # 会話履歴クリアボタン
         with col1:
             self.clear_button()
-        # 会話履歴保存ボタン
         with col2:
+            self.delete_last_message()
+
+        # 会話履歴保存ボタン
+        with col3:
             self.save_messages(messages)
