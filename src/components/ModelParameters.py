@@ -27,20 +27,6 @@ _DEFAULT_SYS_PROMPT: str = (
 )
 
 
-@dataclass
-class SystemPrompt:
-    use_prompt: bool = True
-    prompt: str = _DEFAULT_SYS_PROMPT
-    disabled_edit: bool = False
-
-    def to_dict(self) -> Dict[str, Any]:
-        return {
-            "use_prompt": self.use_prompt,
-            "prompt": self.prompt,
-            "disabled_edit": self.disabled_edit,
-        }
-
-
 class ModelParameters:
 
     def __init__(self) -> None:
@@ -48,16 +34,8 @@ class ModelParameters:
 
     def _initialize_session_state(self) -> None:
         if "system_prompt" not in st.session_state:
-            st.session_state.use_sys_prompt = True
+            st.session_state.use_sys_prompt = False
             st.session_state.system_prompt = _DEFAULT_SYS_PROMPT
-            st.session_state.fixed_sys_prompt = False
-            # system_prompt = {
-            #     "use_prompt": True,
-            #     "prompt": _DEFAULT_SYS_PROMPT,
-            #     "disabled_edit": True,
-            # }
-            # st.session_state.system_prompt = system_prompt
-            # st.session_state.system_prompt = SystemPrompt()
 
         if "llm_params" not in st.session_state:
             st.session_state.llm_params = LLMParameters()
@@ -138,3 +116,20 @@ class ModelParameters:
 
     def get_llm_params(self) -> Dict[str, Any]:
         return st.session_state.llm_params.to_dict()
+
+    def render_sysprompt_editor(self):
+        with st.expander("System Prompt (システム指示):", expanded=False):
+            updated_prompt = st.session_state.system_prompt
+            updated_prompt = st.text_area(
+                "Edit SYSTEM_PROMPT",
+                value=st.session_state.system_prompt,
+                height=100,
+                disabled=(len(st.session_state.messages) > 0),
+            )
+            st.session_state.system_prompt = updated_prompt
+
+            st.session_state.use_sys_prompt = st.toggle(
+                label="use System Prompt",
+                value=st.session_state.use_sys_prompt,
+                disabled=(len(st.session_state.messages) > 0),
+            )
