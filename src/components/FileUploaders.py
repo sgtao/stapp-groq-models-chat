@@ -6,6 +6,8 @@ import time
 import chardet
 import streamlit as st
 
+from components.Messages import Messages
+
 
 class FileUploaders:
     def __init__(self):
@@ -73,11 +75,7 @@ class FileUploaders:
                 if self._is_new_attach_file(uploaded_file.name):
                     st.session_state.last_attach_filename = uploaded_file.name
 
-                attach_file = f"""
-                # {uploaded_file.name}
-                -----
-                {file_content}
-                """
+                attach_file = f"# {uploaded_file.name}\n-----\n{file_content}"
 
                 return attach_file
 
@@ -86,7 +84,7 @@ class FileUploaders:
 
         return None
 
-    def json_chat_history(self):
+    def json_chat_history(self, messages: Messages) -> None:
         uploaded_file = st.file_uploader(
             "Before 1st chat, upload previous chat history",
             type=("json"),
@@ -99,9 +97,10 @@ class FileUploaders:
             st.info("After load, Click 'x' manualy.")
             # message.アップロードされたファイルは手動でクリア
             chat_history_messages = json.load(uploaded_file)
-            st.session_state.messages = []
-            for message in chat_history_messages:
-                st.session_state.messages.append(message)
+            # st.session_state.messages = []
+            # for message in chat_history_messages:
+            #     st.session_state.messages.append(message)
+            messages.set_whole_messages(chat_history_messages)
             st.info("会話履歴を更新します...")
             time.sleep(3)
             st.rerun()
