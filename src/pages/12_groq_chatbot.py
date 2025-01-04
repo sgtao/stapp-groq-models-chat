@@ -5,6 +5,7 @@ from components.GropApiKey import GropApiKey
 from components.ModelSelector import ModelSelector
 from components.MessageController import MessageController
 from components.ModelParameters import ModelParameters
+from components.FileUploaders import FileUploaders
 
 from functions.GroqAPI import GroqAPI
 
@@ -34,6 +35,7 @@ def main():
     groq_api_key = GropApiKey()
     model_selector = ModelSelector("Base-Language")
     model_params = ModelParameters()
+    file_uploaders = FileUploaders()
 
     # サイドバー：APIキー入力
     groq_api_key.input_key()
@@ -59,14 +61,30 @@ def main():
         return
 
     # セッション状態の全内容を表示
-    # st.write("#### 全セッション状態")
-    # st.json(st.session_state)  # JSON形式で表示
+    # with st.expander("#### session_state状態（for debug）", expanded=False):
+    #     st.json(st.session_state)  # JSON形式で表示
 
-    # 会話履歴の保存・削除
     if len(st.session_state.messages) > 0:
         # チャット履歴の初期化と表示
         display_chat_history()
         message_controller.place_components(st.session_state.messages)
+
+    # 会話履歴の保存・削除
+    st.subheader("Attachment text file or chat history json:")
+    col1, col2 = st.columns([1, 1])
+    updated_file_content = None
+    # ファイルアップロード機能
+    with col1:
+        # uploaded_file = file_uploaders.text_file_upload(message)
+        updated_file_content = file_uploaders.text_file_upload()
+    # chat_history アップロード機能
+    with col2:
+        # upload_file = file_uploaders.json_chat_history(message)
+        file_uploaders.json_chat_history()
+
+    # アップロードファイルは手動クリアとなるため、メッセージ表示
+    # if uploaded_file is not None:
+    #     st.warning("After clear chat, CLEAR upload_file manualy.")
 
     # ユーザー入力
     if prompt := st.chat_input("メッセージを入力してください:"):
@@ -81,6 +99,12 @@ def main():
                     "content": st.session_state.system_prompt,
                 }
             )
+
+        if updated_file_content is not None:
+            st.session_state.messages.append(
+                {"role": "system", "content": updated_file_content}
+            )
+
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
