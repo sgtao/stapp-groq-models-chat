@@ -15,13 +15,13 @@ This Application has some pages using Groq-API LLM.
 
 # サイドバーのページに移動
 st.page_link(
-    "pages/11_groq_models_info.py", label="Go to Models info. page", icon="📚"
+    "pages/01_groq_models_info.py", label="Go to Models info. page", icon="📚"
 )
 st.page_link(
-    "pages/12_groq_chatbot.py", label="Go to Groq Chatbot page", icon="💭"
+    "pages/02_groq_chatbot.py", label="Go to Groq Chatbot page", icon="💭"
 )
 st.page_link(
-    "pages/13_groq_image_description.py",
-    label="Go to Image Description page",
+    "pages/03_image_description.py",
+    label="Go to Image Description",
     icon="🏞",
 )

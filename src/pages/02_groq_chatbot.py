@@ -1,4 +1,4 @@
-# 12_groq_chatbot.py
+# 02_groq_chatbot.py
 import streamlit as st
 
 from components.GropApiKey import GropApiKey

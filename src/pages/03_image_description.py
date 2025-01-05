@@ -1,4 +1,4 @@
-# 13_groq_image_description.py
+# 03_image_description.py.py
 import io
 import time
 

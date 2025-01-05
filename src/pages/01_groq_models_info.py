@@ -1,4 +1,4 @@
-# 11_groq_models_info.py
+# 01_groq_models_info.py
 import streamlit as st
 
 from components.GropApiKey import GropApiKey
