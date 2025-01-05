@@ -20,25 +20,9 @@ def main():
     # 初期化を最初に行う
     message_controller = MessageController()
     groq_api_key = GropApiKey()
-    model_selector = ModelSelector("Base-Language")
-    model_params = ModelParameters()
-    file_uploaders = FileUploaders()
-    messages = Messages()
-    modal_dialogs = ModalDialogs()
 
     # サイドバー：APIキー入力
     groq_api_key.input_key()
-
-    # チャットクライアントの初期化
-    client = GroqAPI(st.session_state.groq_api_key)
-
-    with st.sidebar:
-        # パラメータ設定UIの表示
-        st.write("Setup LLM Prameters:")
-        model_selector.select_box()
-        model_params.render_tuning_parameters()
-        model_params.render_sysprompt_editor()
-        modal_dialogs.render_parameter_store_loader()
 
     # メイン画面の構築
     st.page_link("main.py", label="Go to Main", icon="🏠")
@@ -50,7 +34,24 @@ def main():
         st.warning("Input Groq API-Key at sidebar")
         return
 
-    # if len(st.session_state.messages) > 0:
+    # チャットクライアントの初期化
+    client = GroqAPI(st.session_state.groq_api_key)
+
+    model_selector = ModelSelector("Base-Language")
+    model_params = ModelParameters()
+    file_uploaders = FileUploaders()
+    messages = Messages()
+    modal_dialogs = ModalDialogs()
+
+    # サイドバーの設定
+    with st.sidebar:
+        # パラメータ設定UIの表示
+        st.write("Setup LLM Prameters:")
+        model_selector.select_box()
+        model_params.render_tuning_parameters()
+        model_params.render_sysprompt_editor()
+        modal_dialogs.render_parameter_store_loader()
+
     if messages.has_message():
         # チャット履歴の初期化と表示
         messages.display_chat_history()
