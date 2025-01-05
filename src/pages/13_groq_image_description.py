@@ -56,15 +56,23 @@ def main():
     # セッション状態の初期化
     if "clear_state" not in st.session_state:
         st.session_state.clear_state = False
+    if "image_type" not in st.session_state:
+        st.session_state.image_type = None
     if "image_data" not in st.session_state:
         st.session_state.image_data = None
+    if "image_prompt" not in st.session_state:
+        st.session_state.image_prompt = "画像を解説してください"
     if "image_message" not in st.session_state:
         st.session_state.image_message = None
 
     # クリア状態のチェックと処理
     if st.session_state.clear_state:
-        st.session_state.image_data = None
+        st.session_state.image_type = None
+        st.session_state.file_image = None
+        st.session_state.pasted_image = None
         st.session_state.image_message = None
+        # if "image_uploader" in st.session_state:
+        #     st.session_state.image_uploader = None
         if "paste_button" in st.session_state:
             st.session_state.paste_button = None
         st.session_state.clear_state = False  # リセット
@@ -81,19 +89,13 @@ def main():
     left, right = st.columns([0.4, 0.6], gap="small", border=True)
     prompt = None
     with left:
-        prompt = st.text_input("メッセージを入力してください:")
-        uploaded_file = st.file_uploader(
-            "画像ファイルをアップロード",
-            type=["png", "jpg", "jpeg"],
-            key="file_uploader",
+        prompt = st.text_input(
+            label="##### プロンプト", value=st.session_state.image_prompt
         )
-        if uploaded_file is not None:
-            # ファイルを読み込んでバイトデータに変換
-            st.session_state.image_data = uploaded_file.getvalue()
-
-        st.write("You can paste image from clipboard")
+        st.session_state.image_prompt = prompt
+        st.write("##### Image")
         paste_result = paste_image_button(
-            label="📋 クリップボードから画像を貼り付け",
+            label="📋 Paste Image data",
             text_color="#ffffff",
             background_color="#3498db",
             hover_background_color="#2980b9",
@@ -104,31 +106,50 @@ def main():
             # PIL.Image を bytes に変換
             img_byte_arr = io.BytesIO()
             paste_result.image_data.save(img_byte_arr, format="PNG")
-            st.session_state.image_data = img_byte_arr.getvalue()
+            st.session_state.pasted_image = img_byte_arr.getvalue()
+            st.session_state.image_type = "pasted_image"
+
+        uploaded_file = st.file_uploader(
+            label="📂 Upload Image File",
+            type=["png", "jpg", "jpeg"],
+            key="image_uploader",
+        )
+        if uploaded_file is not None:
+            # ファイルを読み込んでバイトデータに変換
+            st.session_state.image_type = "file_image"
+            st.session_state.file_image = uploaded_file.getvalue()
+            st.info("After load, Click 'x' manualy.")
 
         # 画像データの表示
-        if st.session_state.image_data is None:
-            st.info("画像データをアップロード、または貼り付けてください")
+        if st.session_state.image_type is None:
+            st.info("Upload file or paste image")
         else:
-            # 画像をリサイズして表示
-            resized_image = process_image(st.session_state.image_data)
+            resized_image = None
             try:
-                if st.button("Clear Image"):
-                    st.success("画像を削除します")
+                if st.button("Clear Image", type="secondary"):
+                    st.success("Clear Image data.")
                     st.session_state.clear_state = True
                     time.sleep(1)
                     st.rerun()
-                    resized_image = None
-
-                else:
-                    st.image(resized_image)
             except Exception as e:
-                st.error(f"クリア処理中にエラーが発生しました: {str(e)}")
+                st.error(f"During clear, error occurred!: {str(e)}")
+
+            # 画像をリサイズして表示
+            if st.session_state.image_type == "file_image":
+                resized_image = process_image(st.session_state.file_image)
+            else:
+                resized_image = process_image(st.session_state.pasted_image)
+            st.image(resized_image)
+            st.session_state.image_data = resized_image
 
     # ユーザー入力
     with right:
         # アシスタントの応答
-        if st.button("Recognize Image"):
+        if st.button(
+            label="Recognize Image",
+            type="primary",
+            disabled=(st.session_state.image_type is None),
+        ):
             messages.clear_messages()
 
             # 最初のメッセージは`system_prompt`を付与する

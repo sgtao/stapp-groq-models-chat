@@ -26,6 +26,7 @@ class ModelSelector:
             or st.session_state.model_type != filter
         ):
             st.session_state.selected_model = None
+            st.session_state.models = []
             self.initialize_options(filter)
 
     def initialize_options(self, filter):

@@ -20,3 +20,8 @@ st.page_link(
 st.page_link(
     "pages/12_groq_chatbot.py", label="Go to Groq Chatbot page", icon="💭"
 )
+st.page_link(
+    "pages/13_groq_image_description.py",
+    label="Go to Image Description page",
+    icon="🏞",
+)
