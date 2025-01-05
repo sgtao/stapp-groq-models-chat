@@ -12,7 +12,7 @@ from components.ModelSelector import ModelSelector
 from components.ModelParameters import ModelParameters
 
 # from components.FileUploaders import FileUploaders
-from components.Messages import Messages
+# from components.Messages import Messages
 from components.ModalDialogs import ModalDialogs
 
 from functions.GroqAPI import GroqAPI
@@ -24,6 +24,23 @@ from functions.image_functions import encode_image_to_base64
 st.set_page_config(
     page_title="Groq Image Description", layout="wide", page_icon="🏞"
 )
+
+
+def init_session_state(optype=None):
+    initial_states = {
+        "clear_state": False,
+        "image_type": None,
+        "image_data": None,
+        "image_prompt": "画像を解説してください",
+        "image_message": [],
+        "file_image": None,
+        "pasted_image": None,
+        "image_response": [],
+        "messages": [],
+    }
+    for key, value in initial_states.items():
+        if key not in st.session_state:
+            st.session_state[key] = value
 
 
 def main():
@@ -49,28 +66,20 @@ def main():
     model_selector = ModelSelector("Vision-Enhanced")
     model_params = ModelParameters()
     # file_uploaders = FileUploaders()
-    messages = Messages()
+    # messages = Messages()
     # message_controller = MessageController()
     modal_dialogs = ModalDialogs()
 
     # セッション状態の初期化
-    if "clear_state" not in st.session_state:
-        st.session_state.clear_state = False
-    if "image_type" not in st.session_state:
-        st.session_state.image_type = None
-    if "image_data" not in st.session_state:
-        st.session_state.image_data = None
-    if "image_prompt" not in st.session_state:
-        st.session_state.image_prompt = "画像を解説してください"
-    if "image_message" not in st.session_state:
-        st.session_state.image_message = None
+    init_session_state()
 
     # クリア状態のチェックと処理
     if st.session_state.clear_state:
         st.session_state.image_type = None
         st.session_state.file_image = None
         st.session_state.pasted_image = None
-        st.session_state.image_message = None
+        st.session_state.image_message = []
+        st.session_state.image_response = []
         # if "image_uploader" in st.session_state:
         #     st.session_state.image_uploader = None
         if "paste_button" in st.session_state:
@@ -86,14 +95,19 @@ def main():
         model_params.render_sysprompt_editor()
         modal_dialogs.render_parameter_store_loader()
 
+    # メイン領域のレイアウト構築
     left, right = st.columns([0.4, 0.6], gap="small", border=True)
-    prompt = None
     with left:
+        """
+        画像処理
+        """
+        # ユーザー入力
+        # prompt = None
         prompt = st.text_input(
-            label="##### プロンプト", value=st.session_state.image_prompt
+            label="#### Prompt :", value=st.session_state.image_prompt
         )
         st.session_state.image_prompt = prompt
-        st.write("##### Image")
+        st.write("##### Image :")
         paste_result = paste_image_button(
             label="📋 Paste Image data",
             text_color="#ffffff",
@@ -118,7 +132,7 @@ def main():
             # ファイルを読み込んでバイトデータに変換
             st.session_state.image_type = "file_image"
             st.session_state.file_image = uploaded_file.getvalue()
-            st.info("After load, Click 'x' manualy.")
+            st.info("At File, Click 'x' after load.")
 
         # 画像データの表示
         if st.session_state.image_type is None:
@@ -142,26 +156,28 @@ def main():
             st.image(resized_image)
             st.session_state.image_data = resized_image
 
-    # ユーザー入力
     with right:
+        """
+        認識処理
+        """
         # アシスタントの応答
         if st.button(
             label="Recognize Image",
+            icon="🤔",
             type="primary",
             disabled=(st.session_state.image_type is None),
         ):
-            messages.clear_messages()
-
-            # 最初のメッセージは`system_prompt`を付与する
-            if st.session_state.use_sys_prompt:
-                prompt += f"\n{st.session_state.system_prompt}\n"
-
             # 画像をbase64エンコードしてユーザーメッセージを付与する
             image_bytes = st.session_state.image_data
             base64_image = encode_image_to_base64(image_bytes)
             image_url = f"data:image/jpeg;base64,{base64_image}"
 
-            st.session_state.messages.append(
+            # 毎回、メッセージ初期化を行いプロンプトを準備
+            st.session_state.image_message = []
+            st.session_state.image_response = []
+            if st.session_state.use_sys_prompt:
+                prompt += f"\n{st.session_state.system_prompt}\n"
+            st.session_state.image_message.append(
                 {
                     "role": "user",
                     "content": [
@@ -181,14 +197,17 @@ def main():
                 with st.spinner("考え中..."):
                     assistant_response = client.single_completion(
                         model=st.session_state.selected_model,
-                        # messages=st.session_state.messages,
-                        messages=messages.get_messages(),
+                        messages=st.session_state.image_message,
                         llm_params=st.session_state.llm_params,
                     )
                     st.markdown(assistant_response)
 
-                    messages.add(role="assistant", content=assistant_response)
-                    st.session_state.image_message = assistant_response
+                    st.session_state.image_response.append(
+                        {
+                            "role": "assistant",
+                            "content": assistant_response,
+                        }
+                    )
                     # st.rerun()
 
 
