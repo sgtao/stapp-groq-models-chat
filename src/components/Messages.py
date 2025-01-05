@@ -32,6 +32,9 @@ class Messages:
         else:
             return False
 
+    def available_sys_prompt(self):
+        return not self.has_message()
+
     def add(self, role: str, content: str):
         st.session_state.messages.append(
             {
@@ -49,7 +52,7 @@ class Messages:
 
     def append_system_prompts(self):
         # システムプロンプト利用時、最初のチャットヒストリーで追加する
-        if self.has_message() and st.session_state.use_sys_prompt:
+        if self.available_sys_prompt() and st.session_state.use_sys_prompt:
             self.add(role="system", content=st.session_state.system_prompt)
 
     def add_with_display_msg(self, role: str, content: str):

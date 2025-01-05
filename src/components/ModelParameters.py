@@ -117,6 +117,16 @@ class ModelParameters:
     def get_llm_params(self) -> Dict[str, Any]:
         return st.session_state.llm_params.to_dict()
 
+    def set_llm_params(self, llm_params=None) -> None:
+        if llm_params is not None:
+            st.session_state.llm_params = LLMParameters(
+                temperature=llm_params["temperature"],
+                top_p=llm_params["top_p"],
+                max_tokens=llm_params["max_tokens"],
+                frequency_penalty=llm_params["frequency_penalty"],
+                presence_penalty=llm_params["presence_penalty"],
+            )
+
     def render_sysprompt_editor(self):
         with st.expander("System Prompt (システム指示):", expanded=False):
             updated_prompt = st.session_state.system_prompt
