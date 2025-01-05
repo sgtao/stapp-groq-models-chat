@@ -7,6 +7,7 @@ from components.MessageController import MessageController
 from components.ModelParameters import ModelParameters
 from components.FileUploaders import FileUploaders
 from components.Messages import Messages
+from components.ModalDialogs import ModalDialogs
 
 from functions.GroqAPI import GroqAPI
 
@@ -23,6 +24,7 @@ def main():
     model_params = ModelParameters()
     file_uploaders = FileUploaders()
     messages = Messages()
+    modal_dialogs = ModalDialogs()
 
     # サイドバー：APIキー入力
     groq_api_key.input_key()
@@ -36,6 +38,7 @@ def main():
         model_selector.select_box()
         model_params.render_tuning_parameters()
         model_params.render_sysprompt_editor()
+        modal_dialogs.render_parameter_store_loader()
 
     # メイン画面の構築
     st.page_link("main.py", label="Go to Main", icon="🏠")
@@ -46,10 +49,6 @@ def main():
     if groq_api_key.has_key() is False:
         st.warning("Input Groq API-Key at sidebar")
         return
-
-    # セッション状態の全内容を表示
-    # with st.expander("#### session_state状態（for debug）", expanded=False):
-    #     st.json(st.session_state)  # JSON形式で表示
 
     # if len(st.session_state.messages) > 0:
     if messages.has_message():
