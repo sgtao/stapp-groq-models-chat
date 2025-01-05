@@ -1,5 +1,6 @@
 # ModalDialogs.py
 from datetime import datetime
+import urllib.parse
 import time
 import yaml
 
@@ -39,6 +40,12 @@ class ModalDialogs:
             time.sleep(1)
             st.rerun()
 
+    def _encode_text(self, text):
+        return urllib.parse.quote(text)
+
+    def _decode_text(self, encoded_text):
+        return urllib.parse.unquote(encoded_text)
+
     # 『表示』モーダル：
     def show_parameters(self):
         # セッション状態の全内容を表示
@@ -56,7 +63,9 @@ class ModalDialogs:
                 "selected_model": st.session_state.selected_model,
                 "llm_params": self.model_parameters.get_llm_params(),
                 "use_sys_prompt": st.session_state.use_sys_prompt,
-                "system_prompt": st.session_state.system_prompt,
+                "system_prompt": self._encode_text(
+                    st.session_state.system_prompt
+                ),
             }
 
             # YAMLに変換
@@ -94,7 +103,9 @@ class ModalDialogs:
                 st.session_state.use_sys_prompt = yaml_content[
                     "use_sys_prompt"
                 ]
-                st.session_state.system_prompt = yaml_content["system_prompt"]
+                st.session_state.system_prompt = self._decode_text(
+                    yaml_content["system_prompt"]
+                )
 
                 st.success("パラメータを正常に読み込みました")
                 time.sleep(1)
