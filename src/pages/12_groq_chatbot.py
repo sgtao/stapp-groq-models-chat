@@ -18,7 +18,6 @@ st.set_page_config(page_title="Groq ChatBot", layout="wide", page_icon="💭")
 
 def main():
     # 初期化を最初に行う
-    message_controller = MessageController()
     groq_api_key = GropApiKey()
 
     # サイドバー：APIキー入力
@@ -40,6 +39,7 @@ def main():
     model_selector = ModelSelector("Base-Language")
     model_params = ModelParameters()
     file_uploaders = FileUploaders()
+    message_controller = MessageController()
     messages = Messages()
     modal_dialogs = ModalDialogs()
 

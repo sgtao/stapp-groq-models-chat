@@ -2619,6 +2619,22 @@ watchdog = {version = ">=2.1.5,<7", markers = "platform_system != \"Darwin\""}
 snowflake = ["snowflake-connector-python (>=2.8.0)", "snowflake-snowpark-python[modin] (>=1.17.0)"]
 
 [[package]]
+name = "streamlit-paste-button"
+version = "0.1.2"
+description = "Streamlit component that allows you to paste images from your clipboard into your app with a button click"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "streamlit-paste-button-0.1.2.tar.gz", hash = "sha256:c06dfd8163bd6eeeba0dc0b8294549395594c04a2854aff899bd261942efb0f0"},
+    {file = "streamlit_paste_button-0.1.2-py3-none-any.whl", hash = "sha256:f65609333ec0169b088cafb5897522354207bf198511552928766b015d65bef2"},
+]
+
+[package.dependencies]
+jinja2 = "*"
+pillow = "*"
+streamlit = ">=1.2"
+
+[[package]]
 name = "taskipy"
 version = "1.14.1"
 description = "tasks runner for python projects"
@@ -2923,4 +2939,4 @@ propcache = ">=0.2.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "41a22f88a651f911cc890461017510cffb4d4b15e7c876cf7eac77070f364c79"
+content-hash = "5f83a07c846d4eccbd9ab4bb61c103571cf6d3c339c1d5ebf3e5cc1e30b9e258"

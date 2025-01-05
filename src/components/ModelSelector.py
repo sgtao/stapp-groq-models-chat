@@ -13,13 +13,19 @@ class ModelSelector:
 
     def __init__(self, filter=None):
         """Define the available models"""
+        if "model_type" not in st.session_state:
+            st.session_state.model_type = filter
         if "models" not in st.session_state:
             st.session_state.models = []
         if "selected_model" not in st.session_state:
             st.session_state.selected_model = None
 
         # モデル情報の取得（初回のみ）
-        if len(st.session_state.models) == 0:
+        if (
+            len(st.session_state.models) == 0
+            or st.session_state.model_type != filter
+        ):
+            st.session_state.selected_model = None
             self.initialize_options(filter)
 
     def initialize_options(self, filter):
