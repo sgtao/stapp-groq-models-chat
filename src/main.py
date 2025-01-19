@@ -23,5 +23,5 @@ st.page_link(
 st.page_link(
     "pages/03_image_description.py",
     label="Go to Image Description",
-    icon="🏞",
+    icon="🖼️",
 )

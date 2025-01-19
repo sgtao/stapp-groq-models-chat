@@ -23,7 +23,7 @@ from functions.image_functions import encode_image_to_base64
 
 # ページ設定に移動
 st.set_page_config(
-    page_title="Groq Image Description", layout="wide", page_icon="🏞"
+    page_title="Groq Image Description", layout="wide", page_icon="🖼️"
 )
 
 _DEFAULT_IMAGE_PROMPT = "画像を解説してください"
@@ -80,7 +80,7 @@ def main():
     # メイン画面の構築
     st.page_link("main.py", label="Go to Main", icon="🏠")
     st.subheader(
-        "🏞 Groq-API Image Description (画像説明)",
+        "🖼️ Groq-API Image Description (画像説明)",
         divider="blue",
     )
     if groq_api_key.has_key() is False:
