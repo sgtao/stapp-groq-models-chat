@@ -1,4 +1,5 @@
 # 03_image_description.py.py
+from datetime import datetime
 import io
 import time
 
@@ -54,6 +55,21 @@ def reset_image_prompt():
     st.session_state.image_prompt = _DEFAULT_IMAGE_PROMPT
 
 
+def save_response(base64_image, prompt, assistant_response):
+    time_stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    if "image_response" not in st.session_state:
+        st.session_state.image_response = []
+
+    st.session_state.image_response.append(
+        {
+            "time_stamp": time_stamp,
+            "base64_image": base64_image,
+            "prompt": prompt,
+            "response": assistant_response,
+        }
+    )
+
+
 def main():
     # 初期化を最初に行う
     groq_api_key = GropApiKey()
@@ -92,7 +108,7 @@ def main():
         st.session_state.file_image = None
         st.session_state.pasted_image = None
         st.session_state.image_message = []
-        st.session_state.image_response = []
+        # st.session_state.image_response = []
         # if "image_uploader" in st.session_state:
         #     st.session_state.image_uploader = None
         if "paste_button" in st.session_state:
@@ -204,7 +220,9 @@ def main():
 
             # 毎回、メッセージ初期化を行いプロンプトを準備
             st.session_state.image_message = []
-            st.session_state.image_response = []
+            # st.session_state.image_response = []
+
+            # 認識処理
             if st.session_state.use_sys_prompt:
                 prompt += f"\n{st.session_state.system_prompt}\n"
             st.session_state.image_message.append(
@@ -237,13 +255,16 @@ def main():
                         wrap_lines=True,
                     )
 
-                    st.session_state.image_response.append(
-                        {
-                            "role": "assistant",
-                            "content": assistant_response,
-                        }
-                    )
-                    # st.rerun()
+                    if assistant_response is not None:
+                        if st.button(
+                            label="#### Save Response",
+                            icon="📁",
+                            on_click=save_response,
+                            args=(base64_image, prompt, assistant_response),
+                        ):
+                            st.success("Success save response")
+                            time.sleep(3)
+                            st.rerun()
 
 
 if __name__ == "__main__":
