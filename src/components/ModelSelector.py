@@ -13,12 +13,16 @@ class ModelSelector:
 
     def __init__(self, filter=None):
         """Define the available models"""
-        if "model_type" not in st.session_state:
-            st.session_state.model_type = filter
-        if "models" not in st.session_state:
-            st.session_state.models = []
-        if "selected_model" not in st.session_state:
-            st.session_state.selected_model = None
+        self.key = filter
+        st.session_state.model_type = filter
+        st.session_state.models = []
+        st.session_state.selected_model = None
+        # if "model_type" not in st.session_state:
+        #     st.session_state.model_type = filter
+        # if "models" not in st.session_state:
+        #     st.session_state.models = []
+        # if "selected_model" not in st.session_state:
+        #     st.session_state.selected_model = None
 
         # モデル情報の取得（初回のみ）
         if (
@@ -46,11 +50,12 @@ class ModelSelector:
         Returns:
             st.selectbox of Models
         """
-
+        # select_box_key = "model_selector" + self.key
+        select_box_key = "model_selector"
         selected_model = st.selectbox(
             "Select Model (モデルを選択):",
             st.session_state.models,
-            key="model_selector",
+            key=select_box_key,
             on_change=_on_model_change,
             index=(
                 st.session_state.models.index(st.session_state.selected_model)
