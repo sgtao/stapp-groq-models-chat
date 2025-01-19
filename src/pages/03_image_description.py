@@ -33,6 +33,7 @@ def init_session_state(optype=None):
         "clear_state": False,
         "image_type": None,
         "image_data": None,
+        "base64_image": None,
         "image_prompt": _DEFAULT_IMAGE_PROMPT,
         "image_message": [],
         "file_image": None,
@@ -85,6 +86,8 @@ def main():
 
     # クリア状態のチェックと処理
     if st.session_state.clear_state:
+        st.session_state.image_data = None
+        st.session_state.base64_image = None
         st.session_state.image_type = None
         st.session_state.file_image = None
         st.session_state.pasted_image = None
@@ -157,7 +160,6 @@ def main():
         if st.session_state.image_type is None:
             st.info("Upload file or paste image")
         else:
-            resized_image = None
             if st.button("Clear Image", type="secondary"):
                 st.success("Clear Image data.")
                 st.session_state.clear_state = True
@@ -165,6 +167,7 @@ def main():
                 st.rerun()
 
             # 画像をリサイズして表示
+            resized_image = None
             try:
                 if st.session_state.image_type == "file_image":
                     resized_image = process_image(st.session_state.file_image)
@@ -172,10 +175,19 @@ def main():
                     resized_image = process_image(
                         st.session_state.pasted_image
                     )
+                st.image(resized_image)
+                st.session_state.image_data = resized_image
+                st.session_state.base64_image = encode_image_to_base64(
+                    resized_image
+                )
             except Exception as e:
                 st.error(f"During show image, error occurred!: {str(e)}")
-            st.image(resized_image)
-            st.session_state.image_data = resized_image
+
+            with st.expander(label="show Base64-Code", expanded=False):
+                st.code(
+                    st.session_state.base64_image,
+                    language=None,
+                )
 
     with right:
         st.write("#### 認識処理 :")
@@ -186,9 +198,8 @@ def main():
             type="primary",
             disabled=(st.session_state.image_type is None),
         ):
-            # 画像をbase64エンコードしてユーザーメッセージを付与する
-            image_bytes = st.session_state.image_data
-            base64_image = encode_image_to_base64(image_bytes)
+            # 画像のbase64エンコードをユーザーメッセージとして付与する
+            base64_image = st.session_state.base64_image
             image_url = f"data:image/jpeg;base64,{base64_image}"
 
             # 毎回、メッセージ初期化を行いプロンプトを準備
