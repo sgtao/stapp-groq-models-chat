@@ -219,7 +219,12 @@ def main():
                         messages=st.session_state.image_message,
                         llm_params=st.session_state.llm_params,
                     )
-                    st.markdown(assistant_response)
+                    # st.markdown(assistant_response)
+                    st.code(
+                        assistant_response,
+                        language="markdown",
+                        wrap_lines=True,
+                    )
 
                     st.session_state.image_response.append(
                         {
