@@ -5,6 +5,7 @@ description = "Groq APIを使用したモデル情報表示とチャットボッ
 authors = ["Shogo Ogami <sg.tao.so@gmail.com>"]
 license = "MIT License"
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.11"

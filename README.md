@@ -11,7 +11,13 @@
 ### Setup
 ```sh
 poetry install
-poetry shell
+
+# start poetry virtual env.
+# poetry shell # for poetry 1.x version
+eval $(poetry env activate) # for poetry 2.x version
+
+# when finish poetry virtual env.
+deactivate
 ```
 
 ### コマンド一覧
