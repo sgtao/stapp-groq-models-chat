@@ -30,7 +30,8 @@ class GroqAPI:
         for item in data:
             if "whisper" in item["id"]:
                 item["supplement"] = "Voice-to-Text"
-            elif "vision" in item["id"]:
+            # elif "vision" in item["id"]:
+            elif "llama-4" in item["id"]:
                 item["supplement"] = "Vision-Enhanced"
             elif "tool-use" in item["id"]:
                 item["supplement"] = "Tool-Enhanced"
